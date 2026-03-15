@@ -5,7 +5,6 @@ import {
   DndContext,
   KeyboardSensor,
   PointerSensor,
-  TouchSensor,
   closestCorners,
   useSensor,
   useSensors,
@@ -53,6 +52,7 @@ export function Board({ performanceMode = false }: BoardProps) {
   const [interaction, setInteraction] = useState<InteractionState>(idleState);
   const [boardRect, setBoardRect] = useState<DOMRect | null>(null);
   const [boundaryActive, setBoundaryActive] = useState(false);
+  const [isCoarsePointer, setIsCoarsePointer] = useState(false);
   const undoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prefersReducedMotion = useReducedMotion();
   const lowMotion = performanceMode || !!prefersReducedMotion;
@@ -60,19 +60,26 @@ export function Board({ performanceMode = false }: BoardProps) {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 6,
-      },
-    }),
-    useSensor(TouchSensor, {
-      activationConstraint: {
-        delay: 120,
-        tolerance: 6,
+        distance: 4,
       },
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const media = window.matchMedia("(pointer: coarse)");
+    const update = () => setIsCoarsePointer(media.matches);
+    update();
+    media.addEventListener("change", update);
+
+    return () => media.removeEventListener("change", update);
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -363,10 +370,11 @@ export function Board({ performanceMode = false }: BoardProps) {
   };
 
   // Keep dragged note visually attached to pointer, then apply boundary rubberband resistance.
-  const modifiers = useMemo(
-    () => [snapCenterToCursor, createRubberbandModifier(boardRect)],
-    [boardRect],
-  );
+  const modifiers = useMemo(() => {
+    const boundaryModifier = createRubberbandModifier(boardRect);
+    // On touch devices, avoid cursor-centering to reduce jumpiness and keep finger-relative drag natural.
+    return isCoarsePointer ? [boundaryModifier] : [snapCenterToCursor, boundaryModifier];
+  }, [boardRect, isCoarsePointer]);
 
   return (
     <div className="relative">

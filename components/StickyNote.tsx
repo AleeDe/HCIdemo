@@ -78,7 +78,7 @@ export const StickyNote = memo(function StickyNote({
       }}
       // Hover lift previews direct manipulation and improves perceived affordance.
       whileHover={lowMotion ? undefined : { y: -4, rotate: note.tilt + 0.5, scale: 1.01 }}
-      className={`group relative w-full select-none rounded-2xl border border-amber-200/70 bg-gradient-to-br from-yellow-100 via-amber-50 to-yellow-200 p-4 will-change-transform dark:border-amber-100/15 dark:from-yellow-200/90 dark:via-yellow-100/75 dark:to-yellow-300/90 ${
+      className={`group relative w-full select-none touch-none rounded-2xl border border-amber-200/70 bg-gradient-to-br from-yellow-100 via-amber-50 to-yellow-200 p-4 will-change-transform dark:border-amber-100/15 dark:from-yellow-200/90 dark:via-yellow-100/75 dark:to-yellow-300/90 ${
         performanceMode ? "shadow-[0_8px_16px_rgba(35,24,0,0.12)] backdrop-blur-none" : "shadow-note backdrop-blur-sm"
       } ${
         isDragging ? "cursor-grabbing" : "cursor-grab"

@@ -16,7 +16,7 @@ export function InteractionMonitor({ state, performanceMode, lowMotion }: Intera
       initial={lowMotion ? false : { opacity: 0, y: 16 }}
       animate={lowMotion ? undefined : { opacity: 1, y: 0 }}
       transition={lowMotion ? { duration: 0.12 } : { type: "spring", stiffness: 220, damping: 22 }}
-      className={`fixed bottom-2 left-2 right-2 z-50 rounded-2xl border border-white/45 bg-white/75 p-3 md:bottom-4 md:left-auto md:right-4 md:w-[320px] md:p-4 dark:border-white/10 dark:bg-slate-900/65 ${
+      className={`pointer-events-none fixed bottom-2 left-2 right-2 z-50 rounded-2xl border border-white/45 bg-white/75 p-3 md:bottom-4 md:left-auto md:right-4 md:w-[320px] md:p-4 dark:border-white/10 dark:bg-slate-900/65 ${
         performanceMode
           ? "shadow-[0_4px_12px_rgba(15,23,42,0.14)] backdrop-blur-none"
           : "shadow-glass backdrop-blur-sm md:backdrop-blur-xl"
